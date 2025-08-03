@@ -106,6 +106,18 @@
             </a>
             <p id="referralCountText">Referrals: 0</p>
         </div>
+
+        <!-- Join Channel -->
+        <div id="joinChannel" style="margin:20px; padding:15px; background:#fff8dc; border:1px solid gold; border-radius:10px; text-align:center;">
+            <p style="font-weight:bold; color:#b8860b;">🎯 Join Our Telegram Channel</p>
+            <a href="https://t.me/goldcoinmining"
+               target="_blank"
+               onclick="joinChannelReward()"
+               style="display:inline-block; background:#FFD700; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; color:black; border:1px solid gold; margin-bottom:10px;">
+               📥 Join & Earn 1000 Coins
+            </a>
+            <p id="joinStatus" style="font-size:14px; color:green;"></p>
+        </div>
     </div>
 
     <!-- Blockchain Section -->
@@ -151,6 +163,7 @@
     let totalCoins = parseInt(localStorage.getItem("totalCoins")) || 100;
     let walletBalance = parseInt(localStorage.getItem("walletBalance")) || 0;
     let referralCount = parseInt(localStorage.getItem("referralCount")) || 0;
+    let hasJoined = JSON.parse(localStorage.getItem("hasJoined")) || false;
 
     const ctx = document.getElementById("miningPie").getContext("2d");
     const miningPie = new Chart(ctx, {
@@ -179,12 +192,12 @@
             timestamp: new Date().toISOString(),
             previousHash: previousBlock.hash,
             hash: generateHash(),
-            transactions: [`Mining Reward: 10 Gold Coins`],
+            transactions: [`Mining Reward: 100 Gold Coins`],
             nonce: blockchain.length
         };
         blockchain.push(newBlock);
-        balance += 10;
-        totalCoins += 10;
+        balance += 100;
+        totalCoins += 100;
         updateBalance();
         renderBlockchain();
         renderRecentBlockchain();
@@ -241,6 +254,20 @@
         localStorage.setItem("totalCoins", totalCoins);
         localStorage.setItem("walletBalance", walletBalance);
         localStorage.setItem("referralCount", referralCount);
+        localStorage.setItem("hasJoined", hasJoined);
+    }
+
+    function joinChannelReward() {
+        if (!hasJoined) {
+            balance += 1000;
+            hasJoined = true;
+            localStorage.setItem("hasJoined", true);
+            saveData();
+            updateBalance();
+            document.getElementById("joinStatus").innerText = "✅ You joined and earned 1000 coins!";
+        } else {
+            document.getElementById("joinStatus").innerText = "✔ Already rewarded for joining!";
+        }
     }
 
     function showSection(id) {
@@ -257,7 +284,7 @@
             autoMiningInterval = null;
             document.getElementById("autoMiningStatus").innerText = "Auto Mining: OFF";
         } else {
-            autoMiningInterval = setInterval(mineBlock, 500);
+            autoMiningInterval = setInterval(mineBlock, 1000); // 1 sec/coin
             document.getElementById("autoMiningStatus").innerText = "Auto Mining: ON";
         }
     }
