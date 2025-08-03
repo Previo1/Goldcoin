@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Gold Coin Mining</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -14,63 +13,46 @@
             padding: 20px;
             padding-bottom: 80px;
             overflow-x: hidden;
-            margin: 0;
         }
         nav {
             background:#fff8dc;
             padding:10px;
             display:flex;
             justify-content:center;
-            gap:10px;
+            gap:15px;
             border-radius:8px;
             margin-bottom:20px;
             border:1px solid gold;
-            flex-wrap: wrap;
         }
         nav a {
             color:#000;
             text-decoration:none;
             font-weight:bold;
-            font-size: 14px;
+            cursor:pointer;
         }
         nav a:hover { color:#ff8c00; }
-
         #mineBtn, #autoMiningBtn {
-            padding: 10px 15px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
-            margin: 8px;
-            width: 90%;
-            max-width: 280px;
+            margin: 10px;
         }
         #mineBtn { background: #FFD700; color: black; }
         #mineBtn:hover { background: #FFC107; }
         #autoMiningBtn { background: #FFA500; color: black; }
         #autoMiningBtn:hover { background: #FF8C00; }
-
         .block {
             border: 1px solid gold;
             margin: 10px auto;
             padding: 10px;
-            width: 95%;
+            width: 90%;
             border-radius: 8px;
             background: #fff8dc;
             text-align: left;
-            font-size: 14px;
         }
-        .hash { font-size: 11px; color: #555; word-break: break-word; }
-        .coin {
-            position: fixed;
-            top: -50px;
-            font-size: 24px;
-            animation: fall linear forwards;
-            z-index: 9999;
-        }
-        @keyframes fall {
-            to { transform: translateY(100vh); opacity: 0; }
-        }
+        .hash { font-size: 12px; color: #555; }
         footer {
             position: fixed;
             bottom: 0;
@@ -81,93 +63,83 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 6px 0;
-            font-size: 12px;
+            padding: 8px 0;
         }
         footer a {
             color:#b8860b;
             text-decoration:none;
             font-weight:bold;
+            cursor:pointer;
         }
         footer a:hover { color:#ff8c00; transform:scale(1.05); }
-
-        /* Smooth Glow Animation for Wallet History */
-        @keyframes smoothGlow {
-            0% { box-shadow: 0 0 2px gold; }
-            50% { box-shadow: 0 0 8px gold; }
-            100% { box-shadow: 0 0 2px gold; }
-        }
-
-        /* Responsive Layout */
-        @media (max-width: 600px) {
-            h1 { font-size: 22px; }
-            #bigBalance { font-size: 20px; }
-            #referralStatus { font-size: 14px; }
-            .block { font-size: 12px; }
-            footer { font-size: 10px; }
-        }
+        .section { display:none; }
+        #homeSection { display:block; }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="#">🏠 Home</a>
+        <a onclick="showSection('homeSection')">🏠 Home</a>
+        <a onclick="showSection('blockchainSection')">🔗 Blockchain</a>
+        <a onclick="showSection('walletSection')">💰 Wallet</a>
+        <a onclick="showSection('miningStatsSection')">📊 Mining Stats</a>
     </nav>
 
-    <!-- Mining Section -->
-    <h1>⛏ Gold Coin Miner</h1>
-    <h1 id="bigBalance" style="color:#b8860b; font-weight:bold;">0 Gold Coins</h1>
-    <p id="status">Ready to mine...</p>
-    <p id="referralStatus">Referrals: 0/5</p>
-    <button id="mineBtn">⛏ Mine Block</button>
-    <div>
-        <button id="autoMiningBtn">▶ Start Auto Mining</button>
-        <p id="autoMiningStatus">Auto Mining: OFF</p>
-    </div>
+    <!-- Home Section -->
+    <div id="homeSection" class="section">
+        <h1>⛏ Gold Coin Miner</h1>
+        <h1 id="bigBalance" style="font-size: 36px; color:#b8860b; font-weight:bold; margin-top:10px;">0 Gold Coins</h1>
+        <p id="status">Ready to mine...</p>
+        <button id="mineBtn">⛏ Mine Block</button>
+        <div>
+            <button id="autoMiningBtn">▶ Start Auto Mining</button>
+            <p id="autoMiningStatus">Auto Mining: OFF</p>
+        </div>
 
-    <!-- Refer & Earn -->
-    <div id="referEarn" style="margin:20px; padding:15px; background:#fff8dc; border:1px solid gold; border-radius:10px;">
-        <p style="font-weight:bold; color:#b8860b;">📢 Refer and Earn</p>
-        <a href="https://t.me/share/url?url=https://t.me/Goldecoinrobot&text=Join%20this%20Gold%20Coin%20Bot%20and%20start%20earning%20coins!"
-           target="_blank"
-           style="display:inline-block; background:#FFD700; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; color:black; border:1px solid gold; margin-bottom:10px;">
-           📤 Refer Friend
-        </a>
-    </div>
-
-    <!-- Recent Blockchain -->
-    <div id="recentBlockchain" style="margin:20px; padding:15px; background:#fff8dc; border-radius:12px; border:1px solid gold;">
-        <h2 style="text-align:center; color:#b8860b; font-size:18px;">🔗 Recent Blockchain Data</h2>
-        <div id="recentChain"></div>
-    </div>
-
-    <!-- Wallet -->
-    <div id="wallet" style="margin:20px; padding:15px; background:#fff8dc; border-radius:12px; border:1px solid gold;">
-        <h2 style="text-align:center; color:#b8860b; font-size:18px;">💰 Wallet</h2>
-        <p><b>Wallet Balance:</b> <span id="walletBalance">0</span> Coins</p>
-        <p style="font-size:12px; color:#555;">(Wallet updates every 24 hours)</p>
-        <div style="margin-top:10px; background:#fff8dc; border:1px solid gold; border-radius:10px; padding:10px;">
-            <h3 style="font-size:14px;">Transaction History</h3>
-            <ul id="walletHistory" style="list-style:disc; margin-left:20px; max-height:120px; overflow-y:auto; font-size:12px;"></ul>
+        <!-- Referral Section -->
+        <div id="referEarn" style="margin:20px; padding:15px; background:#fff8dc; border:1px solid gold; border-radius:10px; text-align:center;">
+            <p style="font-weight:bold; color:#b8860b;">📢 Refer and Earn</p>
+            <a href="https://t.me/share/url?url=https://t.me/Goldecoinrobot&text=Join%20this%20Gold%20Coin%20Bot%20and%20start%20earning%20coins!"
+               target="_blank"
+               style="display:inline-block; background:#FFD700; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; color:black; border:1px solid gold; margin-bottom:10px;">
+               📤 Refer Friend
+            </a>
+            <p id="referralCountText">Referrals: 0</p>
         </div>
     </div>
 
-    <!-- Blockchain (Full) -->
-    <h2 id="blockchain" style="font-size:18px;">Blockchain</h2>
-    <div id="chain"></div>
+    <!-- Blockchain Section -->
+    <div id="blockchainSection" class="section">
+        <h2>🔗 Recent Blockchain Data</h2>
+        <div id="recentChain"></div>
+        <h2>Blockchain</h2>
+        <div id="chain"></div>
+    </div>
 
-    <!-- Mining Stats -->
-    <div id="miningStats" style="margin:20px; padding:15px; background:#fff8dc; border-radius:12px; border:1px solid gold;">
-        <h2 style="text-align:center; color:#b8860b; font-size:18px;">📊 Mining Statistics</h2>
-        <canvas id="miningPie" width="250" height="250"></canvas>
+    <!-- Wallet Section -->
+    <div id="walletSection" class="section">
+        <h2>💰 Wallet</h2>
+        <p><b>Wallet Balance:</b> <span id="walletBalance">0</span> Coins</p>
+        <div style="margin-top:15px; background:#fff8dc; border:1px solid gold; border-radius:10px; padding:10px;">
+            <h3>Transaction History</h3>
+            <ul id="walletHistory" style="list-style:disc; margin-left:20px; max-height:150px; overflow-y:auto;"></ul>
+        </div>
+    </div>
+
+    <!-- Mining Statistics Section -->
+    <div id="miningStatsSection" class="section">
+        <h2>📊 Mining Statistics</h2>
+        <canvas id="miningPie" width="300" height="300"></canvas>
         <p><b>Total Mined:</b> <span id="minedCoins">0</span> / 21,000,000</p>
         <p><b>Remaining:</b> <span id="remainingCoins">21,000,000</span></p>
+        <hr style="margin:15px 0; border:1px solid gold;">
+        <p><b>Your Mining:</b> <span id="yourMinedCoins">0</span> Coins</p>
     </div>
 
     <footer>
-        <a href="#blockchain">🔗 Blockchain</a>
-        <a href="#wallet">💰 Wallet</a>
-        <a href="#miningStats">📊 Mining Stats</a>
+        <a onclick="showSection('blockchainSection')">🔗 Blockchain</a>
+        <a onclick="showSection('walletSection')">💰 Wallet</a>
+        <a onclick="showSection('miningStatsSection')">📊 Mining Stats</a>
     </footer>
 
 <script>
@@ -176,14 +148,9 @@
         { index: 0, timestamp: new Date().toISOString(), previousHash: "0", hash: "GENESIS_HASH", transactions: ["Genesis Reward 100 Gold Coins"], nonce: 0 }
     ];
     let balance = parseInt(localStorage.getItem("balance")) || 100;
-    let nonce = 0;
     let totalCoins = parseInt(localStorage.getItem("totalCoins")) || 100;
-    let totalBlocks = parseInt(localStorage.getItem("totalBlocks")) || 0;
-    let referralCount = parseInt(localStorage.getItem("referralCount")) || 0;
-    let miningPower = parseFloat(localStorage.getItem("miningPower")) || 1;
     let walletBalance = parseInt(localStorage.getItem("walletBalance")) || 0;
-    let lastWalletUpdate = parseInt(localStorage.getItem("lastWalletUpdate")) || 0;
-    let lastActiveTime = parseInt(localStorage.getItem("lastActiveTime")) || 0;
+    let referralCount = parseInt(localStorage.getItem("referralCount")) || 0;
 
     const ctx = document.getElementById("miningPie").getContext("2d");
     const miningPie = new Chart(ctx, {
@@ -201,125 +168,28 @@
         miningPie.data.datasets[0].data = [totalCoins, totalSupply - totalCoins];
         document.getElementById("minedCoins").innerText = totalCoins;
         document.getElementById("remainingCoins").innerText = totalSupply - totalCoins;
+        document.getElementById("yourMinedCoins").innerText = balance;
         miningPie.update();
     }
 
-    function updateReferralStatus() {
-        document.getElementById("referralStatus").innerText = `Referrals: ${referralCount}/5`;
-    }
-
-    const currentTime = Date.now();
-    if (!lastActiveTime || currentTime - lastActiveTime > 24 * 60 * 60 * 1000) {
-        alert("⛏ Please activate mining for today!");
-    }
-    lastActiveTime = currentTime;
-    localStorage.setItem("lastActiveTime", lastActiveTime);
-
-    if (!lastWalletUpdate || currentTime - lastWalletUpdate > 24 * 60 * 60 * 1000) {
-        walletBalance += balance;
-        localStorage.setItem("walletBalance", walletBalance);
-        const li = document.createElement("li");
-        li.textContent = `+${balance} 🪙 added to Wallet (${new Date().toLocaleString()})`;
-        document.getElementById("walletHistory").prepend(li);
-        balance = 0;
-        lastWalletUpdate = currentTime;
-        localStorage.setItem("lastWalletUpdate", lastWalletUpdate);
-    }
-
-    document.getElementById("mineBtn").onclick = () => mineBlock(false);
-    document.getElementById("autoMiningBtn").onclick = toggleAutoMining;
-
-    function coinRain(count = 10) {
-        for (let i = 0; i < count; i++) {
-            const coin = document.createElement("div");
-            coin.classList.add("coin");
-            coin.innerHTML = "💰";
-            coin.style.left = Math.random() * window.innerWidth + "px";
-            coin.style.animationDuration = (Math.random() * 2 + 2) + "s";
-            document.body.appendChild(coin);
-            setTimeout(() => coin.remove(), 3000);
-        }
-    }
-
-    function bigCoinAnimation() {
-        const bigCoin = document.createElement("div");
-        bigCoin.innerHTML = "🪙";
-        bigCoin.style.position = "fixed";
-        bigCoin.style.fontSize = "80px";
-        bigCoin.style.top = "50%";
-        bigCoin.style.left = "50%";
-        bigCoin.style.transform = "translate(-50%, -50%)";
-        bigCoin.style.animation = "fadeOut 1s forwards";
-        document.body.appendChild(bigCoin);
-        setTimeout(() => bigCoin.remove(), 1000);
-    }
-
-    function mineBlock(isAuto = false) {
-        if (totalCoins >= 1000 && referralCount < 5) {
-            alert("⚠ Mining power reduced! Refer 5 friends to restore full speed.");
-            return;
-        }
-        nonce++;
-        document.getElementById("status").innerText = `Mining... Coins: ${totalCoins}`;
-
-        if (nonce % 50 === 0) {
-            const previousBlock = blockchain[blockchain.length - 1];
-            const newBlock = {
-                index: blockchain.length,
-                timestamp: new Date().toISOString(),
-                previousHash: previousBlock.hash,
-                hash: generateHash(),
-                transactions: [`Mining Reward: ${10 * miningPower} Gold Coins`],
-                nonce: nonce
-            };
-            blockchain.push(newBlock);
-            balance += 10 * miningPower;
-            totalCoins += 10 * miningPower;
-            totalBlocks++;
-
-            const li = document.createElement("li");
-            li.innerHTML = `[${isAuto ? "AUTO" : "MANUAL"}] +${10 * miningPower} 🪙 mined (${new Date().toLocaleString()})`;
-            li.style.background = "#fff8dc";
-            li.style.border = "1px solid gold";
-            li.style.padding = "4px";
-            li.style.borderRadius = "6px";
-            li.style.marginBottom = "4px";
-            li.style.fontWeight = "bold";
-            li.style.animation = "smoothGlow 1.5s ease-in-out 3";
-            document.getElementById("walletHistory").prepend(li);
-
-            setTimeout(() => {
-                li.style.background = "transparent";
-                li.style.fontWeight = "normal";
-                li.style.border = "none";
-                li.style.animation = "none";
-            }, 3000);
-
-            saveData();
-            updateBalance();
-            renderBlockchain();
-            renderRecentBlockchain();
-            updateMiningChart();
-            coinRain(10);
-
-            if (isAuto) bigCoinAnimation();
-        }
-    }
-
-    function toggleAutoMining() {
-        if (window.autoMiningInterval) {
-            clearInterval(window.autoMiningInterval);
-            document.getElementById("autoMiningStatus").innerText = "Auto Mining: OFF";
-            window.autoMiningInterval = null;
-        } else {
-            const boosted = referralCount >= 5;
-            const miningSpeed = boosted ? 80 : 100;
-
-            window.autoMiningInterval = setInterval(() => mineBlock(true), miningSpeed);
-            document.getElementById("autoMiningStatus").innerText = boosted
-                ? "Auto Mining: ON ⚡ Boost Active (Speed: 80ms)"
-                : "Auto Mining: ON (Speed: 100ms)";
-        }
+    function mineBlock() {
+        const previousBlock = blockchain[blockchain.length - 1];
+        const newBlock = {
+            index: blockchain.length,
+            timestamp: new Date().toISOString(),
+            previousHash: previousBlock.hash,
+            hash: generateHash(),
+            transactions: [`Mining Reward: 10 Gold Coins`],
+            nonce: blockchain.length
+        };
+        blockchain.push(newBlock);
+        balance += 10;
+        totalCoins += 10;
+        updateBalance();
+        renderBlockchain();
+        renderRecentBlockchain();
+        updateMiningChart();
+        saveData();
     }
 
     function generateHash() {
@@ -335,7 +205,6 @@
             div.innerHTML = `
                 <strong>Block #${block.index}</strong><br>
                 Timestamp: ${block.timestamp}<br>
-                <span class="hash">Prev: ${block.previousHash}</span><br>
                 <span class="hash">Hash: ${block.hash}</span><br>
                 Transactions: ${block.transactions.join(", ")}
             `;
@@ -362,6 +231,7 @@
     function updateBalance() {
         document.getElementById("bigBalance").innerText = balance + " Gold Coins";
         document.getElementById("walletBalance").innerText = walletBalance;
+        document.getElementById("referralCountText").innerText = "Referrals: " + referralCount;
         updateMiningChart();
     }
 
@@ -369,24 +239,34 @@
         localStorage.setItem("blockchain", JSON.stringify(blockchain));
         localStorage.setItem("balance", balance);
         localStorage.setItem("totalCoins", totalCoins);
-        localStorage.setItem("totalBlocks", totalBlocks);
-        localStorage.setItem("miningPower", miningPower);
         localStorage.setItem("walletBalance", walletBalance);
-        localStorage.setItem("lastWalletUpdate", lastWalletUpdate);
-        localStorage.setItem("lastActiveTime", lastActiveTime);
         localStorage.setItem("referralCount", referralCount);
     }
 
-    function checkMiningPower() {
-        miningPower = (totalCoins >= 1000 && referralCount < 5) ? 0.5 : 1;
-        localStorage.setItem("miningPower", miningPower);
+    function showSection(id) {
+        document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+        document.getElementById(id).style.display = "block";
+    }
+
+    let autoMiningInterval = null;
+    document.getElementById("autoMiningBtn").onclick = toggleAutoMining;
+
+    function toggleAutoMining() {
+        if (autoMiningInterval) {
+            clearInterval(autoMiningInterval);
+            autoMiningInterval = null;
+            document.getElementById("autoMiningStatus").innerText = "Auto Mining: OFF";
+        } else {
+            autoMiningInterval = setInterval(mineBlock, 500);
+            document.getElementById("autoMiningStatus").innerText = "Auto Mining: ON";
+        }
     }
 
     updateBalance();
     renderBlockchain();
     renderRecentBlockchain();
-    checkMiningPower();
-    updateReferralStatus();
+
+    document.getElementById("mineBtn").onclick = mineBlock;
 </script>
 </body>
 </html>
